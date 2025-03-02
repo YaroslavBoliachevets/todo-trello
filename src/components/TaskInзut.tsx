@@ -11,6 +11,7 @@ const TaskInput: React.FC<TaskInputProps> = ({
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
+    if (!taskContent.trim()) return;
     handleAddTask(taskContent, columnId);
     setTaskContent('');
     inputSwaper();
@@ -18,22 +19,25 @@ const TaskInput: React.FC<TaskInputProps> = ({
 
   return (
     <div>
-      <form action="">
+      <form action="" className="add-task-form">
         <label htmlFor="">
           {' '}
-          enter your task
-          <input
-            type="text"
+          <textarea
+            className="task-textarea"
+            // type="text"
             value={taskContent}
             onChange={(e) => setTaskContent(e.target.value)}
+            placeholder="Enter your task"
           />
         </label>
-        <button type="submit" onClick={handleSubmit}>
-          add task
-        </button>
-        <button type="button" onClick={inputSwaper}>
-          x
-        </button>
+        <div className="button-group">
+          <button type="submit" className="add-button" onClick={handleSubmit}>
+            Add a card
+          </button>
+          <button type="button" className="close-button" onClick={inputSwaper}>
+            x
+          </button>
+        </div>
       </form>
     </div>
   );

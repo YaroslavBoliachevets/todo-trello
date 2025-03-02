@@ -1,40 +1,7 @@
 #root {
-  max-width: 1280px;
+  width: 100%;
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
 }
 
 .read-the-docs {
@@ -43,15 +10,22 @@
 
 .workspace {
   display: flex;
-  width: 800px;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 20px;
+  background-color: #c3c3c3;
 }
 
 .column {
+  flex: 1;
   background-color: rgb(124, 116, 116);
-  width: 200px;
+  min-width: 200px;
+  max-width: 400px;
   padding: 15px;
+  margin: 0 10px 20px;
   height: 100%;
+  box-shadow: 0 5px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
 }
 
 .column-button {
@@ -60,9 +34,43 @@
 
 .card {
   background-color: #fff;
-  padding: 1px;
+  padding: 5px;
   margin-bottom: 10px;
   border-radius: 5px;
 
   box-shadow: 5px 5px 5px 1px rgba(0, 0, 0, 0.75);
+
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+
+.add-task-form {
+  display: flex;
+  flex-direction: column;
+  padding: 25px 0 0 0;
+}
+
+.task-textarea {
+  width: 95%;
+  padding: 8px;
+  min-height: 80px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+  outline: none;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.button-group {
+  text-align: start;
+}
+
+.add-button {
+  width: 200px;
+  margin-right: 15px;
+  /* background-color: #478ef1; */
+}
+
+/* .close-button {
+} */
