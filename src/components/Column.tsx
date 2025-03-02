@@ -1,9 +1,17 @@
 import { ColumnProps } from '../types';
 import { Card } from './Card';
-import { Droppable } from '@hello-pangea/dnd';
+import { TaskInput } from './TaskInзut';
 
-const Column: React.FC<ColumnProps> = ({ column, tasks }) => {
-  //   console.log('column', column);
+import { Droppable } from '@hello-pangea/dnd';
+import { useState } from 'react';
+
+const Column: React.FC<ColumnProps> = ({ column, tasks, handleAddTask }) => {
+  const [isFormOpen, setIsFormOpen] = useState(false);
+
+  function newTaskClick() {
+    setIsFormOpen(!isFormOpen);
+  }
+
   return (
     <div className="column">
       <p>{column.title}</p>
@@ -28,9 +36,18 @@ const Column: React.FC<ColumnProps> = ({ column, tasks }) => {
           </div>
         )}
       </Droppable>
-      <button type="button" className="column-button">
-        + add task
-      </button>
+
+      {isFormOpen ? (
+        <TaskInput
+          inputSwaper={newTaskClick}
+          handleAddTask={handleAddTask}
+          columnId={column.id}
+        />
+      ) : (
+        <button type="button" className="column-button" onClick={newTaskClick}>
+          + add task
+        </button>
+      )}
     </div>
   );
 };

@@ -22,6 +22,24 @@ interface ColumnState {
 interface ColumnProps {
   column: ColumnState;
   tasks: Record<string, Task>;
+  handleAddTask: HandleAddTask;
 }
 
-export type { BoardState, ColumnState, ColumnProps, Task, TaskProps };
+interface TaskInputProps {
+  inputSwaper: InputSwaper;
+  handleAddTask: HandleAddTask;
+  columnId: string;
+}
+
+type HandleAddTask = (content: string, columnId: string) => void;
+
+type InputSwaper = () => void;
+
+export type {
+  BoardState,
+  ColumnState,
+  ColumnProps,
+  Task,
+  TaskProps,
+  TaskInputProps,
+};

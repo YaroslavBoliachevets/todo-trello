@@ -2,7 +2,7 @@ import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import './App.css';
 
-import { BoardState } from './types';
+import { BoardState, Task } from './types';
 import { Column } from './components/Column';
 
 import { DragDropContext, DropResult } from '@hello-pangea/dnd';
@@ -66,6 +66,30 @@ function App() {
     setBoard(newBoard);
   }
 
+  const handleAddTask = (content: string, columnId: string) => {
+    const newTaskId = `${Date.now()}`;
+    const newTask: Task = { id: newTaskId, content };
+    setBoard((prevBoard) =>
+      // console.log(prevBoard);
+
+      ({
+        ...prevBoard,
+        tasks: {
+          ...prevBoard.tasks,
+          [newTaskId]: newTask,
+        },
+
+        columns: {
+          ...prevBoard.columns,
+          [columnId]: {
+            ...prevBoard.columns[columnId],
+            taskIds: [...prevBoard.columns[columnId].taskIds, newTaskId],
+          },
+        },
+      }),
+    );
+  };
+
   return (
     <>
       <div>
@@ -85,6 +109,7 @@ function App() {
               column={columnData}
               tasks={board.tasks}
               key={columnData.id}
+              handleAddTask={handleAddTask}
             />
           ))}
         </div>
