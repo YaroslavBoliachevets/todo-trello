@@ -33,6 +33,7 @@
 }
 
 .card {
+  display: flex;
   background-color: #fff;
   padding: 5px;
   margin-bottom: 10px;
@@ -42,6 +43,12 @@
 
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.card-button {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
 }
 
 .add-task-form {

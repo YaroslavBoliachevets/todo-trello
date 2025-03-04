@@ -21,11 +21,12 @@ function App() {
 
   useEffect(() => {
     if (board) {
+      // console.log('board', board);
       localStorage.setItem('boardState', JSON.stringify(board));
 
       // update data on the server
       fetch('http://localhost:3000/board', {
-        method: 'PATCH',
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -94,6 +95,78 @@ function App() {
     });
   };
 
+  const handleEditTask = (taskId: string, newContent: string) => {
+    if (!board) return null;
+
+    setBoard((prevBoard) => {
+      if (!prevBoard) return null;
+      const updatedTask = { id: taskId, content: newContent };
+      const updatedBoard = {
+        ...prevBoard,
+        tasks: {
+          ...prevBoard.tasks,
+          [taskId]: { ...prevBoard.tasks[taskId], ...updatedTask },
+        },
+      };
+      fetch('http://localhost:3000/board', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedBoard),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`Failed ti update server: ${response.status}`);
+          }
+          console.log('task updated on server');
+        })
+        .catch((err) => console.error('Error updating on server:', err));
+      return updatedBoard;
+    });
+  };
+
+  const handleDeleteTask = (taskId: string) => {
+    if (!board) return null;
+    setBoard((prevBoard) => {
+      if (!prevBoard) {
+        return null;
+      }
+
+      const updatedBoard = {
+        ...prevBoard,
+        columns: {
+          ...prevBoard.columns,
+          ...Object.fromEntries(
+            Object.entries(prevBoard.columns).map(([colId, col]) => [
+              colId,
+              { ...col, taskIds: col.taskIds.filter((id) => id !== taskId) },
+            ]),
+          ),
+        },
+
+        tasks: Object.fromEntries(
+          Object.entries(prevBoard.tasks).filter(([id]) => id !== taskId),
+        ),
+      };
+      // console.log('updatedBoard after del', updatedBoard);
+      fetch('http://localhost:3000/board', {
+        method: 'PUT',
+        headers: { 'Content-Type': ' application/json' },
+        body: JSON.stringify(updatedBoard),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(
+              `failed to upd server (del task): ${response.status}`,
+            );
+          }
+          console.log('task deleted from server');
+        })
+        .catch((err) => console.error('Error del task from server:', err));
+      return updatedBoard;
+    });
+  };
+
+  if (!board) return <div>Loading...</div>;
   return (
     <>
       <h1>Trello board</h1>
@@ -101,12 +174,13 @@ function App() {
         <div className="workspace">
           {board
             ? Object.values(board.columns).map((columnData) => (
-                // console.log(columnData.id);
                 <Column
                   column={columnData}
                   tasks={board.tasks}
                   key={columnData.id}
                   handleAddTask={handleAddTask}
+                  onEditTask={handleEditTask}
+                  onDeleteTask={handleDeleteTask}
                 />
               ))
             : ''}
