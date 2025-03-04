@@ -1,6 +1,6 @@
 import { ColumnProps } from '../types';
 import { Card } from './Card';
-import { TaskInput } from './TaskInзut';
+import { TaskInput } from './TaskInput';
 
 import { Droppable } from '@hello-pangea/dnd';
 import React, { useState } from 'react';
