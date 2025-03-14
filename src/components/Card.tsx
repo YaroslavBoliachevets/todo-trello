@@ -2,6 +2,7 @@ import { TaskProps } from '../types';
 import { Draggable } from '@hello-pangea/dnd';
 import { useState } from 'react';
 import { EditForm } from './EditForm';
+import { Box, Text, Button, Stack } from '@chakra-ui/react';
 
 const Card: React.FC<TaskProps> = ({
   task,
@@ -21,24 +22,35 @@ const Card: React.FC<TaskProps> = ({
   return (
     <Draggable draggableId={task.id} index={index}>
       {(provided) => (
-        <div
+        <Box
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className="card"
+          // className="card"
+          bg="white"
+          p={2}
+          rounded="md"
+          shadow="md"
+          mb={2}
         >
           {!isEditing ? (
-            <>
-              <p>{task.content}</p>
-              <button
-                type="button"
+            <Stack direction="row">
+              <Text fontSize="sm" color="grey.700">
+                {task.content}
+              </Text>
+              <Button
+                // type="button"
+                size="xs"
+                colorScheme="blue"
+                color="#363636"
+                ml={'auto'}
                 onClick={() => {
                   setIsEditing(true);
                 }}
               >
                 edit
-              </button>
-            </>
+              </Button>
+            </Stack>
           ) : (
             <EditForm
               onCancel={() => setIsEditing(false)}
@@ -52,7 +64,7 @@ const Card: React.FC<TaskProps> = ({
           {/* <div className="card-button">
             
           </div> */}
-        </div>
+        </Box>
       )}
     </Draggable>
   );

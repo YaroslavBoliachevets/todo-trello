@@ -5,6 +5,9 @@ import { Column } from './components/Column';
 
 import { DragDropContext, DropResult } from '@hello-pangea/dnd';
 import { useState, useEffect } from 'react';
+import { Box, Flex, Heading } from '@chakra-ui/react';
+
+import { initialData } from './initialData';
 
 function App() {
   const [board, setBoard] = useState<BoardState | null>(null);
@@ -15,8 +18,14 @@ function App() {
       .then((responce) => {
         return responce.json();
       })
-      .then((data) => setBoard(data))
-      .catch((err) => console.log('Error:', err));
+      .then((data) => {
+        console.log('data', data);
+        setBoard(data);
+      })
+      .catch((err) => {
+        console.log('Error:', err);
+        setBoard(initialData);
+      });
   }, []);
 
   useEffect(() => {
@@ -168,26 +177,60 @@ function App() {
 
   if (!board) return <div>Loading...</div>;
   return (
-    <>
-      <h1>Trello board</h1>
+    <Box minH="10vh" bgGradient="linear(to-b, #EDF2F7, #E2E8F0)">
+      <Box textAlign="center" mb={6} pt={6}>
+        <Heading
+          as="h1"
+          size="xl"
+          textAlign="center"
+          mb={6}
+          color="#2D3748"
+          textTransform="uppercase"
+          letterSpacing="wide"
+          fontWeight="bold"
+          _hover={{ color: '#2C7A7B', transition: 'color 0.3s' }}
+          position="relative"
+          _after={{
+            content: '""',
+            position: 'absolute',
+            bottom: '-8px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '400px',
+            height: '2px',
+            bg: '#2C7A7B',
+          }}
+        >
+          Trello board
+        </Heading>
+      </Box>
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="workspace">
-          {board
-            ? Object.values(board.columns).map((columnData) => (
-                <Column
-                  column={columnData}
-                  tasks={board.tasks}
-                  key={columnData.id}
-                  handleAddTask={handleAddTask}
-                  onEditTask={handleEditTask}
-                  onDeleteTask={handleDeleteTask}
-                />
-              ))
-            : ''}
-        </div>
+        <Box p={4} minH="100vh" bg="#616161" m="auto">
+          <Flex
+            gap={6}
+            wrap={{ base: 'wrap', md: 'nowrap' }}
+            justifyContent="space-around"
+            alignItems="baseline"
+          >
+            {board
+              ? Object.values(board.columns).map((columnData) => (
+                  <Column
+                    column={columnData}
+                    tasks={board.tasks}
+                    key={columnData.id}
+                    handleAddTask={handleAddTask}
+                    onEditTask={handleEditTask}
+                    onDeleteTask={handleDeleteTask}
+                  />
+                ))
+              : ''}
+          </Flex>
+        </Box>
       </DragDropContext>
-    </>
+    </Box>
   );
 }
 
 export default App;
+
+// json-server --watch db.json

@@ -4,10 +4,11 @@
   text-align: center;
 }
 
-.read-the-docs {
-  color: #888;
+h1 {
+  margin: 0;
 }
 
+/* 
 .workspace {
   display: flex;
   flex-wrap: wrap;
@@ -76,8 +77,8 @@
 .add-button {
   width: 200px;
   margin-right: 15px;
-  /* background-color: #478ef1; */
-}
+  background-color: #478ef1;
+} */
 
 /* .close-button {
 } */

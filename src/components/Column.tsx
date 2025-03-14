@@ -5,6 +5,8 @@ import { TaskInput } from './TaskInput';
 import { Droppable } from '@hello-pangea/dnd';
 import React, { useState } from 'react';
 
+import { Box, Button, VStack, Text } from '@chakra-ui/react';
+
 const Column: React.FC<ColumnProps> = ({
   column,
   tasks,
@@ -19,16 +21,44 @@ const Column: React.FC<ColumnProps> = ({
   }
 
   return (
-    <div className="column">
-      <p>{column.title}</p>
+    <Box
+      w="300px"
+      bgGradient="linear(to-b, #2D3748, #1A202C)"
+      p={4}
+      rounded="xl"
+      shadow="md"
+      border="1px solid"
+      borderColor="#4A5568"
+    >
+      <Box
+        as="h2"
+        fontSize="lg"
+        fontWeight="bold"
+        color="#FFFFFF"
+        mb={4}
+        textTransform="uppercase"
+        letterSpacing="wide"
+      >
+        {column.title}
+      </Box>
 
       <Droppable droppableId={column.id}>
         {(provided) => (
-          <div
+          <VStack
             ref={provided.innerRef}
             {...provided.droppableProps}
-            className="column-content"
+            align="stretch"
+            p={2}
+            rounded="md"
+            border={column.taskIds.length === 0 ? '2px dashed' : 'none'}
+            borderColor="#718096"
           >
+            {column.taskIds.length === 0 && (
+              <Text color="#A0AEC0" fontSize="sm" textAlign="center">
+                No tasks yet
+              </Text>
+            )}
+
             {column.taskIds.map((taskId, index) => {
               // find the task in tasks objby matching its ID, then render Card if found
               const task = Object.values(tasks).find((el) => el.id == taskId);
@@ -47,18 +77,26 @@ const Column: React.FC<ColumnProps> = ({
             })}
 
             {provided.placeholder}
-          </div>
+          </VStack>
         )}
       </Droppable>
 
       {!isFormOpen ? (
-        <button
-          type="button"
-          className="column-button"
+        <Button
+          mt={4}
+          w="full"
+          // colorScheme="blue"
+          bg="#2C7A7B"
+          color="#FFFFFF"
+          size="sm"
+          fontWeight="medium"
+          // color="#363636"
+          _hover={{ bg: '#4CB5B6' }}
+          _active={{ outline: 'none', bg: '#285E61' }}
           onClick={() => setIsFormOpen(true)}
         >
-          + add task
-        </button>
+          + Add a card
+        </Button>
       ) : (
         <TaskInput
           inputSwaper={newTaskClick}
@@ -68,7 +106,7 @@ const Column: React.FC<ColumnProps> = ({
           columnId={column.id}
         />
       )}
-    </div>
+    </Box>
   );
 };
 
