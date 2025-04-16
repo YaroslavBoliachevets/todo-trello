@@ -22,10 +22,10 @@ const addTask = (board: BoardState, content: string, columnId: string) => {
 };
 
 const editTask = (board: BoardState, taskId: string, newContent: string) => {
-  // if (!board) return null;
-  // if (!board.tasks.[taskId]) {
-  //   throw new Error(`task with id ${taskId} not found` )
-  // }
+  if (!board.tasks[taskId]) {
+    console.log(`task with id ${taskId} not found`);
+    return board;
+  }
 
   const updatedTask = { id: taskId, content: newContent };
   return {
@@ -34,6 +34,27 @@ const editTask = (board: BoardState, taskId: string, newContent: string) => {
       ...board.tasks,
       [taskId]: { ...board.tasks[taskId], ...updatedTask },
     },
+  };
+};
+
+const deleteTask = (board: BoardState, taskId: string): BoardState => {
+  if (!board.tasks[taskId]) return board;
+
+  return {
+    ...board,
+    columns: {
+      ...board.columns,
+      ...Object.fromEntries(
+        Object.entries(board.columns).map(([colId, col]) => [
+          colId,
+          { ...col, taskIds: col.taskIds.filter((id) => id !== taskId) },
+        ]),
+      ),
+    },
+
+    tasks: Object.fromEntries(
+      Object.entries(board.tasks).filter(([id]) => id !== taskId),
+    ),
   };
 };
 
@@ -52,4 +73,4 @@ const saveBoardToServer = (board: BoardState): Promise<void> => {
     .catch((err) => console.error('Error updating on server:', err));
 };
 
-export { addTask, editTask, saveBoardToServer };
+export { addTask, editTask, deleteTask, saveBoardToServer };

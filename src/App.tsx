@@ -8,7 +8,12 @@ import { useState, useEffect } from 'react';
 import { Box, Flex, Heading } from '@chakra-ui/react';
 
 import { initialData } from './initialData';
-import { addTask, editTask, saveBoardToServer } from './utils/taskManager';
+import {
+  addTask,
+  editTask,
+  deleteTask,
+  saveBoardToServer,
+} from './utils/taskManager';
 
 function App() {
   const [board, setBoard] = useState<BoardState | null>(null);
@@ -81,44 +86,46 @@ function App() {
 
   const handleDeleteTask = (taskId: string) => {
     if (!board) return null;
-    setBoard((prevBoard) => {
-      if (!prevBoard) {
-        return null;
-      }
+    const updatedBoard = deleteTask(board, taskId);
+    setBoard(updatedBoard);
+    // setBoard((prevBoard) => {
+    //   if (!prevBoard) {
+    //     return null;
+    //   }
 
-      const updatedBoard = {
-        ...prevBoard,
-        columns: {
-          ...prevBoard.columns,
-          ...Object.fromEntries(
-            Object.entries(prevBoard.columns).map(([colId, col]) => [
-              colId,
-              { ...col, taskIds: col.taskIds.filter((id) => id !== taskId) },
-            ]),
-          ),
-        },
+    //   const updatedBoard = {
+    //     ...prevBoard,
+    //     columns: {
+    //       ...prevBoard.columns,
+    //       ...Object.fromEntries(
+    //         Object.entries(prevBoard.columns).map(([colId, col]) => [
+    //           colId,
+    //           { ...col, taskIds: col.taskIds.filter((id) => id !== taskId) },
+    //         ]),
+    //       ),
+    //     },
 
-        tasks: Object.fromEntries(
-          Object.entries(prevBoard.tasks).filter(([id]) => id !== taskId),
-        ),
-      };
-      // console.log('updatedBoard after del', updatedBoard);
-      fetch('http://localhost:3000/board', {
-        method: 'PUT',
-        headers: { 'Content-Type': ' application/json' },
-        body: JSON.stringify(updatedBoard),
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(
-              `failed to upd server (del task): ${response.status}`,
-            );
-          }
-          console.log('task deleted from server');
-        })
-        .catch((err) => console.error('Error del task from server:', err));
-      return updatedBoard;
-    });
+    //     tasks: Object.fromEntries(
+    //       Object.entries(prevBoard.tasks).filter(([id]) => id !== taskId),
+    //     ),
+    //   };
+    //   // console.log('updatedBoard after del', updatedBoard);
+    //   fetch('http://localhost:3000/board', {
+    //     method: 'PUT',
+    //     headers: { 'Content-Type': ' application/json' },
+    //     body: JSON.stringify(updatedBoard),
+    //   })
+    //     .then((response) => {
+    //       if (!response.ok) {
+    //         throw new Error(
+    //           `failed to upd server (del task): ${response.status}`,
+    //         );
+    //       }
+    //       console.log('task deleted from server');
+    //     })
+    //     .catch((err) => console.error('Error del task from server:', err));
+    //   return updatedBoard;
+    // });
   };
 
   if (!board) return <div>Loading...</div>;

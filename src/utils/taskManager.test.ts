@@ -1,4 +1,4 @@
-import { addTask, editTask } from './taskManager';
+import { addTask, editTask, deleteTask } from './taskManager';
 import { BoardState } from '../types';
 
 const mockBoard: BoardState = {
@@ -6,18 +6,26 @@ const mockBoard: BoardState = {
     'column-1': {
       id: 'column-1',
       title: 'first-column',
-      taskIds: [],
+      taskIds: ['3'],
     },
     'column-2': {
       id: 'column-2',
       title: 'second-column',
-      taskIds: ['1'],
+      taskIds: ['1', '2'],
     },
   },
   tasks: {
     '1': {
       id: '1',
       content: 'lorem',
+    },
+    '2': {
+      id: '2',
+      content: 'lorem21',
+    },
+    '3': {
+      id: '3',
+      content: 'lorem31',
     },
   },
 };
@@ -41,7 +49,7 @@ describe('Task manager functions', () => {
       });
 
       expect(updatedBoard.columns[columnId].taskIds).toContain(newTaskId);
-      expect(updatedBoard.columns[columnId].taskIds).toHaveLength(1);
+      expect(updatedBoard.columns[columnId].taskIds).toHaveLength(2);
     });
   });
 
@@ -60,8 +68,20 @@ describe('Task manager functions', () => {
       const updatedContent = 'new content';
       const updatedBoard = editTask(mockBoard, taskId, updatedContent);
 
-      expect(Object.keys(updatedBoard.tasks)).toHaveLength(1);
+      expect(Object.keys(updatedBoard.tasks)).toHaveLength(3);
       expect(updatedBoard.tasks[taskId]).toBeDefined();
+    });
+  });
+
+  describe('delete task', () => {
+    it('should delete task from tasks and columns', () => {
+      const taskId = '1';
+      const updatedBoard = deleteTask(mockBoard, taskId);
+
+      expect(updatedBoard.tasks).toBeDefined();
+      expect(Object.keys(updatedBoard.tasks)).toHaveLength(2);
+      expect(updatedBoard.columns['column-1'].taskIds).not.toContain(taskId);
+      expect(updatedBoard.columns['column-2'].taskIds).toEqual(['2']);
     });
   });
 });
