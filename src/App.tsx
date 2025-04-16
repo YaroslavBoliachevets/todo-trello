@@ -1,6 +1,6 @@
 import './App.css';
 
-import { BoardState, Task } from './types';
+import { BoardState } from './types';
 import { Column } from './components/Column';
 
 import { DragDropContext, DropResult } from '@hello-pangea/dnd';
@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import { Box, Flex, Heading } from '@chakra-ui/react';
 
 import { initialData } from './initialData';
+import { addTask, editTask, saveBoardToServer } from './utils/taskManager';
 
 function App() {
   const [board, setBoard] = useState<BoardState | null>(null);
@@ -29,25 +30,11 @@ function App() {
   }, []);
 
   useEffect(() => {
+    // update data on the server when board updates
     if (board) {
       // console.log('board', board);
       localStorage.setItem('boardState', JSON.stringify(board));
-
-      // update data on the server
-      fetch('http://localhost:3000/board', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(board),
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`Failed to update server: ${response.status}`);
-          }
-          console.log('server updated');
-        })
-        .catch((err) => console.error('Error:', err));
+      saveBoardToServer(board);
     }
   }, [board]);
 
@@ -80,57 +67,16 @@ function App() {
   }
 
   const handleAddTask = (content: string, columnId: string) => {
-    const newTaskId = `${Date.now()}`;
-    const newTask: Task = { id: newTaskId, content };
-
-    setBoard((prevBoard) => {
-      if (!prevBoard) return null;
-
-      return {
-        ...prevBoard,
-        tasks: {
-          ...prevBoard.tasks,
-          [newTaskId]: newTask,
-        },
-
-        columns: {
-          ...prevBoard.columns,
-          [columnId]: {
-            ...prevBoard.columns[columnId],
-            taskIds: [...prevBoard.columns[columnId].taskIds, newTaskId],
-          },
-        },
-      };
-    });
+    if (!board) return;
+    const updatedBoard = addTask(board, content, columnId);
+    setBoard(updatedBoard);
   };
 
   const handleEditTask = (taskId: string, newContent: string) => {
     if (!board) return null;
 
-    setBoard((prevBoard) => {
-      if (!prevBoard) return null;
-      const updatedTask = { id: taskId, content: newContent };
-      const updatedBoard = {
-        ...prevBoard,
-        tasks: {
-          ...prevBoard.tasks,
-          [taskId]: { ...prevBoard.tasks[taskId], ...updatedTask },
-        },
-      };
-      fetch('http://localhost:3000/board', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedBoard),
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`Failed ti update server: ${response.status}`);
-          }
-          console.log('task updated on server');
-        })
-        .catch((err) => console.error('Error updating on server:', err));
-      return updatedBoard;
-    });
+    const updatedTask = editTask(board, taskId, newContent);
+    setBoard(updatedTask);
   };
 
   const handleDeleteTask = (taskId: string) => {
